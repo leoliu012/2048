@@ -1,99 +1,95 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#e9edf2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#151b27" media="(prefers-color-scheme: dark)">
+  <meta name="description" content="2048 with an AI coach that suggests and explains the best move every turn.">
   <title>2048</title>
 
-  <link href="style/main.css" rel="stylesheet" type="text/css">
-  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="icon" href="favicon.ico">
   <link rel="apple-touch-icon" href="meta/apple-touch-icon.png">
-  <link rel="apple-touch-startup-image" href="meta/apple-touch-startup-image-640x1096.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)"> <!-- iPhone 5+ -->
-  <link rel="apple-touch-startup-image" href="meta/apple-touch-startup-image-640x920.png"  media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 2)"> <!-- iPhone, retina -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1, user-scalable=no, minimal-ui">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Unbounded:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style/main.css">
+  <script type="module" src="js/main.js"></script>
 </head>
 <body>
-  <div class="container">
-    <div class="heading">
-      <h1 class="title">2048</h1>
-      <div class="scores-container">
-        <div class="score-container">0</div>
-        <div class="best-container">0</div>
+  <main class="app">
+    <header class="top">
+      <h1 class="wordmark">2048</h1>
+      <div class="scores">
+        <div class="score"><span class="score-label">Score</span><span class="score-value" data-score>0</span></div>
+        <div class="score"><span class="score-label">Best</span><span class="score-value" data-best>0</span></div>
       </div>
-    </div>
+    </header>
 
-    <div class="above-game">
-      <p class="game-intro">Join the numbers and get to the <strong>2048 tile!</strong></p>
-      <a class="restart-button">New Game</a>
-    </div>
-
-    <div class="game-container">
-      <div class="game-message">
-        <p></p>
-        <div class="lower">
-	        <a class="keep-playing-button">Keep going</a>
-          <a class="retry-button">Try again</a>
+    <section class="play" aria-label="Game board">
+      <div class="board" tabindex="-1">
+        <div class="cells" aria-hidden="true">
+          <div></div><div></div><div></div><div></div>
+          <div></div><div></div><div></div><div></div>
+          <div></div><div></div><div></div><div></div>
+          <div></div><div></div><div></div><div></div>
         </div>
-      </div>
-
-      <div class="grid-container">
-        <div class="grid-row">
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-        </div>
-        <div class="grid-row">
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-        </div>
-        <div class="grid-row">
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-        </div>
-        <div class="grid-row">
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
-          <div class="grid-cell"></div>
+        <div class="tiles"></div>
+        <div class="hint-arrow" hidden aria-hidden="true"></div>
+        <div class="game-message" hidden>
+          <p></p>
+          <div class="message-actions">
+            <button type="button" data-action="keep-going">Keep going</button>
+            <button type="button" data-action="retry">New game</button>
+          </div>
         </div>
       </div>
 
-      <div class="tile-container">
-
+      <div class="controls">
+        <button type="button" data-action="new-game">New game</button>
+        <button type="button" data-action="undo" disabled>Undo</button>
       </div>
-    </div>
+    </section>
 
-    <p class="game-explanation">
-      <strong class="important">How to play:</strong> Use your <strong>arrow keys</strong> to move the tiles. When two tiles with the same number touch, they <strong>merge into one!</strong>
-    </p>
-    <hr>
-    <p>
-    <strong class="important">Note:</strong> This site is the official version of 2048. You can play it on your phone via <a href="http://git.io/2048">http://git.io/2048.</a> All other apps or sites are derivatives or fakes, and should be used with caution.
-    </p>
-    <hr>
-    <p>
-    Created by <a href="http://gabrielecirulli.com" target="_blank">Gabriele Cirulli.</a> Based on <a href="https://itunes.apple.com/us/app/1024!/id823499224" target="_blank">1024 by Veewo Studio</a> and conceptually similar to <a href="http://asherv.com/threes/" target="_blank">Threes by Asher Vollmer.</a>
-    </p>
-  </div>
+    <aside class="coach" data-state="thinking" aria-label="AI coach">
+      <div class="coach-head">
+        <h2>Coach</h2>
+        <button type="button" class="switch" role="switch" aria-checked="true" data-action="toggle-hints">
+          <span class="switch-track" aria-hidden="true"></span>
+          Hints
+        </button>
+      </div>
 
-  <script src="js/bind_polyfill.js"></script>
-  <script src="js/classlist_polyfill.js"></script>
-  <script src="js/animframe_polyfill.js"></script>
-  <script src="js/keyboard_input_manager.js"></script>
-  <script src="js/html_actuator.js"></script>
-  <script src="js/grid.js"></script>
-  <script src="js/tile.js"></script>
-  <script src="js/local_storage_manager.js"></script>
-  <script src="js/game_manager.js"></script>
-  <script src="js/application.js"></script>
+      <div class="coach-body">
+        <div class="advice" aria-live="polite">
+          <span class="advice-arrow" data-hint-arrow aria-hidden="true">·</span>
+          <div>
+            <p class="advice-title" data-hint-title>Thinking…</p>
+            <p class="advice-reason" data-hint-reason></p>
+          </div>
+        </div>
+        <p class="advice-warning" data-hint-warning hidden></p>
+
+        <ul class="moves" data-hint-moves aria-label="All moves, rated"></ul>
+        <p class="coach-meta" data-hint-meta></p>
+
+        <div class="coach-actions">
+          <button type="button" class="primary" data-action="play-hint">Play this move</button>
+          <button type="button" data-action="autoplay" aria-pressed="false">Auto-play</button>
+        </div>
+      </div>
+
+      <p class="coach-off">Hints are off. Turn them on to see the best move after every turn.</p>
+    </aside>
+
+    <footer class="notes">
+      <p><strong>How to play:</strong> slide tiles with the arrow keys, WASD or a swipe. Equal tiles merge. Reach 2048.</p>
+      <p>Shortcuts: <kbd>Space</kbd> plays the coach's move, <kbd>U</kbd> undoes, <kbd>?</kbd> toggles hints, <kbd>R</kbd> starts over.</p>
+      <p class="credit">Based on <a href="https://github.com/gabrielecirulli/2048">2048 by Gabriele Cirulli</a>, itself based on 1024 by Veewo Studio and inspired by Threes.</p>
+    </footer>
+  </main>
 </body>
 </html>
